@@ -31,3 +31,9 @@ skills-lock.json
 # OS / logs
 .DS_Store
 *.log
+
+# Expo / Metro
+.metro-health-check*
+.kotlin/
+*.orig.*
+*.pem

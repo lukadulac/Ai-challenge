@@ -1,4 +1,4 @@
-import { type ActivityType, fromDayNumber, type PlannedActivity, toDayNumber } from "../contract";
+import { type ActivityType, fromDayNumber, type PlannedActivity, toDayNumber, weeklyHalfHours } from "../contract";
 
 export interface PlannerInput {
   today: string;
@@ -13,20 +13,16 @@ export interface PlannerInput {
 export function planActivities({ today, examDate, weeklyHours }: PlannerInput): PlannedActivity[] {
   const firstDay = toDayNumber(today);
   const lastDay = toDayNumber(examDate) - 1;
-  const daysPerWeek = Math.min(7, Math.ceil(weeklyHours / 2));
-  const weeklyHalfHours = weeklyHours * 2;
-  const baseHalfHours = Math.floor(weeklyHalfHours / daysPerWeek);
-  const extraHalfHours = weeklyHalfHours % daysPerWeek;
+  const halfHoursByRank = weeklyHalfHours(weeklyHours);
+  const daysPerWeek = halfHoursByRank.length;
 
   const studyDays: { day: number; halfHours: number }[] = [];
   for (let blockEnd = lastDay; blockEnd >= firstDay; blockEnd -= 7) {
     for (let slot = 0; slot < daysPerWeek; slot++) {
       const day = blockEnd - Math.floor((slot * 7) / daysPerWeek);
       if (day < firstDay) continue;
-      // Slot 0 is the block's last day, so the highest slots come first in time
-      // and are the ones that get the leftover half-hours.
-      const chronologicalRank = daysPerWeek - 1 - slot;
-      studyDays.push({ day, halfHours: baseHalfHours + (chronologicalRank < extraHalfHours ? 1 : 0) });
+      // Slot 0 is the block's last day, so the highest slots come first in time.
+      studyDays.push({ day, halfHours: halfHoursByRank[daysPerWeek - 1 - slot]! });
     }
   }
   studyDays.sort((a, b) => a.day - b.day);

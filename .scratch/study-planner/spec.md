@@ -210,7 +210,7 @@ Worked examples, which are also acceptance tests:
 - The token is stored in `expo-secure-store`. The API base URL comes from an Expo public env var (`EXPO_PUBLIC_API_URL`), pointing at the laptop's LAN IP.
 - One API client module wraps `fetch`, attaches the bearer token, parses responses with the contract schemas, turns error bodies into typed errors, and on any 401 from a Study Plan endpoint clears the token and sends the Student to Login. A network failure produces a "Server nije dostupan" message.
 - Server state is handled with TanStack Query. Saving, deleting and marking Activities refresh the affected list and detail views. Marking an Activity is optimistic, and a failure rolls it back and shows a short message.
-- New Plan holds the form: Subject, Exam Date (native date picker limited to tomorrow … today + 365 days) and Weekly Hours.
+- New Plan holds the form: Subject, Exam Date (native date picker limited to tomorrow … today + 365 days) and Weekly Hours. It starts with an Exam Date two weeks out and 6 Weekly Hours. Under the hours it shows the weekly rhythm ("3 dana nedeljno po 2 h"), computed with the contract's `studyDaysPerWeek`, the same rule the Planner uses.
   - "Prikaži predlog" calls the Proposal endpoint and shows the Activities and total hours below the form.
   - Changing any input clears the shown Proposal.
   - "Sačuvaj plan" is only available while a Proposal is shown. It saves with the same inputs and opens the new Study Plan.

@@ -2,14 +2,24 @@
   "name": "study-planner",
   "private": true,
   "workspaces": [
-    "backend"
+    "backend",
+    "app"
   ],
   "scripts": {
-    "dev": "npm run dev -w backend",
+    "dev": "trap \"trap - INT TERM EXIT; kill 0\" INT TERM EXIT; npm run dev -w backend & npm start -w app",
+    "dev:api": "npm run dev -w backend",
+    "dev:app": "npm start -w app",
     "test": "npm test --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present"
   },
   "engines": {
-    "node": ">=22.12"
+    "node": ">=22.13"
+  },
+  "overrides": {
+    "react": "19.3.0",
+    "typescript": "~6.0.3"
+  },
+  "devDependencies": {
+    "typescript": "~6.0.3"
   }
 }

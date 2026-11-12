@@ -63,7 +63,21 @@ export const planLimits = {
   maxDaysToExam: 365,
 } as const;
 
-const weeklyHoursRange = `Broj sati nedeljno mora biti od ${planLimits.minWeeklyHours} do ${planLimits.maxWeeklyHours}.`;
+/** How many days a week the Planner schedules for these Weekly Hours: about 2 h a day, at most every day. */
+export const studyDaysPerWeek = (weeklyHours: number) => Math.min(7, Math.ceil(weeklyHours / 2));
+
+/**
+ * The half-hours each study day of a full week gets, earliest day first: the week's
+ * half-hours split evenly, with any leftover going to the earliest days.
+ */
+export function weeklyHalfHours(weeklyHours: number): number[] {
+  const days = studyDaysPerWeek(weeklyHours);
+  const base = Math.floor((weeklyHours * 2) / days);
+  const extra = (weeklyHours * 2) % days;
+  return Array.from({ length: days }, (_, rank) => base + (rank < extra ? 1 : 0));
+}
+
+const weeklyHoursRange =`Broj sati nedeljno mora biti od ${planLimits.minWeeklyHours} do ${planLimits.maxWeeklyHours}.`;
 
 /** What the Student enters for a Proposal, plus "today" as the phone sees it. */
 export const planInputSchema = z
